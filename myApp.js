@@ -6,22 +6,40 @@ const timeInSeconds = ninetyDaysInSeconds
 
 module.exports = app
 const api = require('./server.js')
-app.use(helmet.hidePoweredBy())
-app.use(helmet.frameguard({ action: 'deny' })) //protect against Clickjacking.
-app.use(helmet.xssFilter()) //protect against XSS.
-app.use(helmet.noSniff()) //protect against MIME sniffing.
-app.use(helmet.ieNoOpen()) //protect against HTTP opening on the Internet Explorer
-app.use(helmet.hsts({ maxAge: timeInSeconds, force: true })) //configuration HTTP Strict Transport Security (HSTS)
-app.use(helmet.dnsPrefetchControl()) //add protect DNS
-app.use(helmet.noCache()) // disable cache our page
 app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", 'trusted-cdn.com'],
+  helmet({
+    frameguard: {
+      // configure
+      action: 'deny',
     },
-  }) // add protect XSS
+    contentSecurityPolicy: {
+      // enable and configure
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ['style.com'],
+        scriptSrc: ["'self'", 'trusted-cdn.com'],
+      },
+    },
+    dnsPrefetchControl: false, // disable
+    noCache: false,
+  })
 )
+// app.use(helmet.hidePoweredBy())
+// app.use(helmet.frameguard({ action: 'deny' })) //protect against Clickjacking.
+// app.use(helmet.xssFilter()) //protect against XSS.
+// app.use(helmet.noSniff()) //protect against MIME sniffing.
+// app.use(helmet.ieNoOpen()) //protect against HTTP opening on the Internet Explorer
+// app.use(helmet.hsts({ maxAge: timeInSeconds, force: true })) //configuration HTTP Strict Transport Security (HSTS)
+// app.use(helmet.dnsPrefetchControl()) //add protect DNS
+// app.use(helmet.noCache()) // disable cache our page
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       scriptSrc: ["'self'", 'trusted-cdn.com'],
+//     },
+//   }) // add protect XSS
+// )
 app.use(express.static('public'))
 app.disable('strict-transport-security')
 app.use('/_api', api)
