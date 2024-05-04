@@ -12,6 +12,7 @@ app.use(helmet.xssFilter()) //protect against XSS.
 app.use(helmet.noSniff()) //protect against MIME sniffing.
 app.use(helmet.ieNoOpen()) //protect against HTTP opening on the Internet Explorer
 app.use(helmet.hsts({ maxAge: timeInSeconds, force: true })) //configuration HTTP Strict Transport Security (HSTS)
+app.use(helmet.dnsPrefetchControl()) //add protect DNS
 app.use(express.static('public'))
 app.disable('strict-transport-security')
 app.use('/_api', api)
